@@ -1,0 +1,83 @@
+if &rtp !~ 'matchit' | packadd matchit | endif
+
+let g:no_join_any    = get(g:,'no_join_any',['\begin', '\end', '\section',
+         \                                   '\subsection', '\subsubsection'])
+let g:no_join_prev   = get(g:,'no_join_prev',[])
+let g:no_join_next   = get(g:,'no_join_next',[])
+let g:verbatim_block = get(g:,'verbatim_block',[])
+
+function s:ConstructPatterns()
+   let s:chp =  g:no_join_any + g:no_join_prev
+   let s:chn =  g:no_join_any + g:no_join_next
+   let s:chp= split(substitute(join(s:chp, ' '), '\\', '\\\\', 'g'))
+   let s:chn= split(substitute(join(s:chn, ' '), '\\', '\\\\', 'g'))
+   if index(g:verbatim_block,'\[') >=0 
+      call remove( g:verbatim_block,index(g:verbatim_block,'\[') )
+      let s:block = '\\begin{\(' . join(g:verbatim_block,'\|') . '\)\*\=}\|\\['
+   else
+      let s:block = '\\begin{\(' . join(g:verbatim_block,'\|') . '\)\*\=}'
+   endif
+endfunction
+
+function s:FormatParagraph()
+
+"  Save marks in temp file, construct patterns if they don't exist
+   let tmp = tempname()
+   exe "wv! " . tmp
+   if !exists('s:chp')
+      call s:ConstructPatterns()
+      if &filetype != 'tex' | let s:chp = ['\_$a'] | let s:chn = ['\_$a'] | endif
+   endif
+    
+"  Mark cursor and window top, open folds, go to start of paragraph, and mark.
+   normal! maHmb`azn
+   call search('^\s*$\|\%^','bc')
+	exe nextnonblank('.')
+   normal! 0mc
+
+   while line('.') == nextnonblank('.') && line('.') != line('$')
+
+"     If desired, skip over all consecutive 'verbatim blocks' and then mark.
+      while match(getline('.'),s:block) +1 && get(g:,'preserve_blocks',1)
+         normal %
+         normal! j0mc
+      endwhile
+
+"     Remove extra blanks. 
+      silent! s/\([\.\?:][)}]\=\)\@2<!\s\{2,}/ /g
+
+"     Format from start of marked line to end of current one if next line can't
+"     join current one or current line can't join next. Then mark next line.
+      let s:chpc = s:chp + [] | let s:chnc = s:chn + [] "Vim needs empty list?
+      if index(map(s:chpc, 'getline(line(".")+1) =~ v:val'),1) >= 0 
+   \  || index(map(s:chnc, 'getline(".") =~ v:val'),1) >= 0 
+         if line('.') > getpos("'c")[1]
+            normal! $md'cV`dgq 
+         endif 
+         normal! j0mck
+      endif
+
+"     Go to next line
+      normal! j0
+
+ 	endwhile
+
+"  Format from start of marked line to end of paragraph or file, then close 
+"  folds, reset window top, restore cursor, restore marks, and delete temp file.
+   normal! md'cV`dgqzN`bzt`a
+   exe "rv! " . tmp
+   call delete(tmp)
+endfunction
+
+function FormatDocument()
+	normal! mqHmrgg
+	while line('.') < line('$')
+		call s:FormatParagraph()
+		/^\s*\n\|\%$
+   endwhile
+	normal! `rzt`q
+endfunction
+
+" Map K to FormatParagraph
+silent! unmap K 
+nnoremap <silent><buffer> K :silent call <SID>FormatParagraph()<CR>

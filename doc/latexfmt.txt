@@ -1,0 +1,154 @@
+*LaTexFmt* is a small plugin that allows you to format LaTeX text with
+fine-grained control.
+
+Author:  Jonathan Engel 
+
+===============================================================================
+Contents                                                     *LaTeXFmtContents*
+
+    1. Introduction ................... |LaTeXFmtIntro|
+    2. Usage .......................... |LaTeXFmtUsage|
+    3. Configuration .................. |LaTeXFmtConfig|
+    4. Bugs ........................... |LaTeXFmtBugs|
+    5. Changelog ...................... |LaTeXFmtChangelog|
+    6. Credit ......................... |LaTeXFmtCredit|
+
+
+===============================================================================
+Section 1: Intro                                                *LaTeXFmtIntro*
+
+LaTeXFmt lets you use format lines, paragraphs, and visual selections in a
+highly configurable "LaTeX-aware" way.  You can specify lists of words that
+prevent a line on which those words appear from merging with the following line,
+with the previous line, or with both the following and previous lines.  You can
+also specify environments (e.g. equation) within which nothing at all is
+formatted.  This plugin was based originally on the clever script at
+
+https://www.vim.org/scripts/script.php?script_id=2307, 
+
+but has been completely rewritten, in particular to use use vim's own
+formatting utility gq.
+
+===============================================================================
+Section 2: Usage                                                *LaTeXFmtUsage*
+
+Map a sequence to 'latexfmt_format', e.g., like this:
+
+map <unique><silent> <Leader>f <Plug>latexfmt_format
+
+In normal mode, with a count, <Leader>f (or whatever other sequence you choose)
+will format the next [count] lines, starting from the one the cursor is in.
+Without a count, it will format the current paragraph.  In visual mode (without
+a count) it will format the current visual selection.  
+
+However it is used, the command removes multiple spaces in the text that it
+formats, except at the beginnings of lines and the ends of sentences.  It also
+leaves the cursor at the same place in the text that it was at before the
+command, instead of moving it to the end of the paragraph or selection as gq
+does.
+
+===============================================================================
+Section 3: Configuration                                       *LaTeXFmtConfig*
+
+There are several variables that you can set in your .vimrc or any other file
+on your run-time path.  
+
+g:latexfmt_no_join_any,
+        Type: List
+        Default List: [ '\(\\)\@1<!%','begin', 'end', '\section', '\subsection', 
+                        '\subsubsection', '\document', '\(\\)\@1<!\[', '\]' ] 
+        
+This list specifies strings that prevent the line they're in from merging with
+either the following line or the previous one.  Any piece of the string is
+enough; the plugin searches for whatever is in the list on each line of your
+selection/paragraph.  
+
+You can use regular expressions to specify strings. The first entry in the list
+above specifies a comment symbol (%) that is not preceded by a backslash, so
+that commented lines will not merge with others but lines containing the string
+'\%', which prints a percentage sign in LaTeX, will do so.  The second-to-last
+entry specifies that a line containing the string '\[' will not merge with other
+lines unless that string is preceded by another backslash, so that strings such
+as '\\[1cm]' do not prevent a line from merging with others.  The string '$$' is
+not currently recognized.  If your regular expressions contain the symbols [ and
+] to specify lists of characters, they may cause trouble; use constructions with
+the @ symbol instead, as in the list above.
+
+Like all the default lists, this one is minimal.  You will probably want to
+create your own.  
+
+g:latexfmt_no_join_prev,
+        Type: List
+        Default List: [ '\item' ] 
+
+This list specifies strings that prevent the line they're in from merging with
+the previous one but allow it to merge with the following one.  The same rules
+apply as above.
+
+g:latexfmt_no_join_next,
+        Type: List
+        Default List: [ '\\' ] 
+
+This list specifies strings that prevent the line they're in from merging with
+the following one but allow it to merge with the previous one. The default list
+prevents a line containing strings such as '\\[1cm]' from merging with the
+following line (though such a line is allowed to join the previous one).
+
+g:latexfmt_verbatim_envs,
+        Type: List
+        Default List: [ 'equation', 'align', 'eqnarray', '\(\\)\@1<!\['  ] 
+
+This list specifies a set of environments that will be left completely
+unchanged.  Starred versions of all those environments are also left unchanged.  
+
+Here it is important to use the full name of each environment, without a
+backslash, and the construction in last entry for the displaymath environment
+'\['.  That construction prevents the displaymath environment from being
+formatted without causing problems when strings like '\\[1cm]' are encountered.
+Again, '$$' won't be recognized.
+
+You can set a few more configuration variables:
+
+g:latexfmt_preserve_envs, 
+        Type: Boolean
+        Default Value: 1
+
+        When set to 0, LaTeXFmt will format text even if it is in one of the
+        environments specified in g:latexfmt_verbatim_envs.  You can map a
+        string to <Plug>latexfmt_toggle_envs to allow yourself to toggle this
+        'setting.'
+
+g:latexfmt_tex_only
+        Type: Boolean
+        Default Value: 0
+
+        When set to 1, LaTeXFmt will not be active in non-tex files.  The
+        default behavior in those files is similar to the action of 'gqap'
+        without cursor movement, plus the removal of multiple spaces (except at
+        the ends of sentences).  
+
+g:latexfmt_noload
+        Type: Boolean
+        Default Value: none
+
+        If this variable exists at all, LaTeXFmt will not load.  The default
+        behavior is to set the variable to 1 after the plugin is loaded so that
+        it's not loaded twice.
+
+===============================================================================
+Section 4: Bugs                                                  *LaTeXFmtBugs*
+
+If you find a bug, please submit it to the github page at
+<http://github.com/engelj/latexfmt>
+
+===============================================================================
+Section 5: Changelog                                        *LaTeXFmtChangelog*
+
+LaTeXFmt 1.0
+    1. Initial release
+
+===============================================================================
+Section 6: Acknowledgment                                      *LaTeXFmtCredit*
+
+This plugin is inspired by (i.e. based on) the clever work of 'lpb612,' who 
+created the script at https://www.vim.org/scripts/script.php?script_id=2307.
