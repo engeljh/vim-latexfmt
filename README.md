@@ -5,8 +5,8 @@
 
  Here's an example of what LaTeXFmt does:
  
-<img src="http://physics.unc.edu/~engelj/LaTeXFmt.gif" style="width: 35vw; min-width: 330px;">
-
+<img src="https://github.com/engeljh/assets/blob/master/LaTeXFmt.gif" style="width: 35vw; min-width: 330px;"> 
+ 
 Before creating this gif, I mapped 'K' to &lt;Plug&gt;latexfmt_format.
 In absence of a count or visual selection, the command formats the current
 paragraph.  One might note several things about the way the paragraphs are
