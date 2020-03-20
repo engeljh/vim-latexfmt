@@ -4,8 +4,8 @@
 ------------------------- 
 
  Here's an example of what LaTeXFmt does:
- 
-<img src="https://github.com/engeljh/assets/blob/master/LaTeXFmt.gif" style="width: 30vw; min-width: 330px;"> 
+   
+<img src="https://github.com/engeljh/assets/blob/master/LaTeXFmt.gif" style="width: 25vw; min-width: 330px;"> 
  
 Before creating this gif, I mapped 'K' to &lt;Plug&gt;latexfmt_format.
 In absence of a count or visual selection, the command formats the current
