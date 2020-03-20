@@ -74,14 +74,5 @@ function latexfmt#FormatLines(key) abort
    call delete(tmp)
 endfunction
 
-function latexfmt#FormatDocument() abort
-	normal! mqHmrgg
-	while line('.') < line('$')
-		call latexfmt#FormatLines('n')
-		call search('^\s*$\|\%$')
-   endwhile
-	normal! `rzt`q
-endfunction
-
 let &cpoptions = s:save_cpo
 unlet s:save_cpo
