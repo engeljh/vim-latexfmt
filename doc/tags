@@ -4,4 +4,5 @@ LaTeXFmtConfig	latexfmt.txt	/*LaTeXFmtConfig*
 LaTeXFmtContents	latexfmt.txt	/*LaTeXFmtContents*
 LaTeXFmtCredit	latexfmt.txt	/*LaTeXFmtCredit*
 LaTeXFmtIntro	latexfmt.txt	/*LaTeXFmtIntro*
+LaTeXFmtUsage	latexfmt.txt	/*LaTeXFmtUsage*
 latexfmt	latexfmt.txt	/*LaTeXFmt*
