@@ -53,7 +53,7 @@ function latexfmt#FormatLines(key) abort
 "     If at end of range or file, format from start of marked line to end of 
 "     current one, then leave loop. 
       if line('.') is l:end || line('.') is line('$') 
-         normal! $md`cV`dgq
+         normal! $md`cV`dgw
          break 
       endif
 
@@ -61,7 +61,7 @@ function latexfmt#FormatLines(key) abort
 "     next one can't join or if next line begins a block. Then mark next line.
       if  getline( line('.') +1 ) =~# '\m'.s:pre || getline('.') =~# '\m'.s:nex 
    \  || (getline( line('.') +1 ) =~# '\m'.s:env && g:latexfmt_preserve_envs)
-            normal! $md'cV`dgqj0mck
+            normal! $md'cV`dgwj0mck
       endif
 
 "     Proceed to next line.
