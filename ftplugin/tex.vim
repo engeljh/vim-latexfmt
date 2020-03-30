@@ -1,8 +1,6 @@
 if exists('g:latexfmt_noload') | finish | endif
-let g:latexfmt_noload= 1
-
-let g:latexfmt_tex_only = get(g:,'latexfmt_tex_only',0)
-if g:latexfmt_tex_only && &ft != 'tex' | finish | endif
+if exists("b:did_latexfmt")    | finish | endif
+let b:did_latexfmt = 1
 
 let s:save_cpo = &cpoptions
 set cpoptions&vim
@@ -18,11 +16,11 @@ let g:latexfmt_verbatim_envs = get( g:,'latexfmt_verbatim_envs', ['equation',
 let g:latexfmt_preserve_envs = get( g:,'latexfmt_preserve_envs', 1 )
 
 " Mapppings
-noremap <expr><silent> <Plug>latexfmt_format mode() =~? 'v' 
+noremap <expr><silent><buffer> <Plug>latexfmt_format mode() =~? 'v' 
          \                   ? ':<C-U>call latexfmt#FormatLines("v")<CR>' 
          \                   : ':<C-U>call latexfmt#FormatLines("n")<CR>' 
 nnoremap <silent><buffer> <Plug>latexfmt_toggle_envs 
-         \   :let g:latexfmt_preserve_envs =  1 - g:latexfmt_preserve_envs<CR> 
+         \   :let g:latexfmt_preserve_envs =  1 - g:latexfmt_preserve_envs<CR>
 
 let &cpoptions = s:save_cpo
 unlet s:save_cpo
