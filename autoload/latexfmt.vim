@@ -32,7 +32,7 @@ function latexfmt#FormatLines(key) abort
    normal! 0mc
 
    while v:true 
-"     If you want, skip over all consecutive 'verbatim environments,' then mark.
+"     If you want, skip over all consecutive preserved environments, then mark.
       while  getline('.') =~# '\m'.s:env && g:latexfmt_preserve_envs
          call search(substitute(substitute(substitute(expand('<cWORD>'),'\[',
        \               '\\]','g'), 'begin','\\end','g'), '*','\\*','g'), 'W')
@@ -41,7 +41,7 @@ function latexfmt#FormatLines(key) abort
       if line('.') > l:end | break | endif
 
 "     Remove extra blanks in current line, except at beginning of line and at 
-"     ends of  sentences. 
+"     ends of sentences. 
       silent! s/\S\zs\([\.\?:][)}]\=\)\@2<!\s\{2,}\ze/ /g
 
 "     If at end of range or file, format from start of marked line to end of 
