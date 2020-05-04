@@ -80,7 +80,7 @@ function latexfmt#FormatLines(key) abort
    if l:up_amt > 0        | exe 'norm! '.l:up_amt.'k' | return | endif
    for i in l:chars[1:-2] | call search('\S')         | endfor
    if len(l:chars) > 1    | call search(l:chars[-1])  | endif "Last character
-   if l:exbl > 0          | exe 'norml! '. l:exbl. 'l'| endif "Extra blanks
+   if l:exbl > 0          | exe 'norm! '. l:exbl. 'l' | endif "Extra blanks
 endfunction
 
 let &cpoptions = s:save_cpo
