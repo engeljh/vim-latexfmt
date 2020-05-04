@@ -42,10 +42,10 @@ in.  Without a count, it will format the current paragraph.  In visual mode
 (without a count) it will format the current visual selection.  
 
 However it is used, the command removes multiple spaces in the text that it
-formats, except at the beginnings of lines and the ends of sentences.  It also
-leaves the cursor at the same place in the text that it was at before the
-command, instead of moving it to the end of the paragraph or selection as gq
-does.
+formats, except at the beginnings of lines and the ends of sentences. (This
+behavior can be switched off; see below.)  It also leaves the cursor at the
+same place in the text that it was at before the command, instead of moving it
+to the end of the paragraph or selection as gq does.
 
 ===============================================================================
 Section 3: Configuration                                       *LaTeXFmtConfig*
@@ -107,7 +107,7 @@ backslash, and the construction in last entry for the displaymath environment
 formatted without causing problems when strings like '\\[1cm]' are encountered.
 Again, '$$' won't be recognized.
 
-You can set two more configuration variables:
+You can set three more configuration variables:
 
 g:latexfmt_preserve_envs, 
         Type: Boolean
@@ -117,6 +117,14 @@ g:latexfmt_preserve_envs,
         environments specified in g:latexfmt_verbatim_envs.  You can map a
         string to <Plug>latexfmt_toggle_envs to allow yourself to toggle this
         'setting.'
+
+g:latexfmt_merge_blanks
+        Type: Boolean
+        Default Value: 1
+
+        LatexFmt's default behavior is to combine multiple blanks into a single
+        one except following the ends of sentences and related constructions.
+        Setting the variable to 0 prevents the combining of blanks.
 
 g:latexfmt_noload
         Type: Boolean
@@ -132,10 +140,16 @@ If you find a bug, please submit it to the github page at
 
 ===============================================================================
 Section 5: Changelog                                        *LaTeXFmtChangelog*
+    
+    1.2  20200-5-3
+
+    Reimplemented without marks to avoid saving and restoring them.  Added
+    configuration variable g:latexfmt_merge_blanks to allow user to turn off
+    the removal of multiple blanks.
 
     1.1  2020-3-30
         
-    Changed plugin to filetype plugin for tex.  Function for non-tex files
+    Changed plugin to filetype plugin for tex.  Functionality for non-tex files
     removed.
 
     1.0 Initial release  2020-3-19
