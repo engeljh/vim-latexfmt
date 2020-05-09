@@ -22,19 +22,19 @@ function latexfmt#FormatLines(key) abort
       let l:end   = prevnonblank( search('^\s*$\|\%$', 'n')   )
    endif
 
-"  Fix problems with undo (unless blanks are merged).
+"  Fix cursor placement after undo (unless blanks are merged).
    exe "normal! ix\<ESC>x" 
 
-"  Build list of non-blanks + end blank (if needed) from start to cursor.
+"  Build list of non-blanks + end blank (if needed) from start line to cursor.
    let l:up_amt = l:start - line('.')    
-   if l:up_amt <= 0     "True unless starting on blank line paragraph mode.
+   if l:up_amt <= 0     "True unless starting on blank line in paragraph mode.
       let l:lines = getline(l:start, '.')
       let l:lines[-1] = strpart(l:lines[-1], 0, col('.')) 
-      let l:chars=split(substitute(join(l:lines,''),' \ze.','', 'g'),'\zs')
-      let l:exbl = len( matchstr(l:lines[-1],'[\.\?:][)}]\=\zs\s\{2,}$') ) - 1
+      let l:chars = split( substitute(join(l:lines,''),' \ze.','', 'g'),'\zs' )
+      let l:extbl = len( matchstr(l:lines[-1],'[\.\?:][)}]\=\zs\s\{2,}$') ) - 1
    endif
     
-"  Save window view, go to start of range, open folds, and mark. 
+"  Save window view, go to start of range, open folds, and mark line. 
    let l:win = winsaveview()
    call cursor(l:start, 1)
    normal! zn
@@ -57,15 +57,15 @@ function latexfmt#FormatLines(key) abort
 
 "     If at end of range or file, format from marked line and leave loop. 
       if line('.') is l:end || line('.') is line('$') 
-         exe 'normal! $gw' . l:mark . 'G'
+         exe 'normal! $gw'.l:mark.'G'
          break 
       endif
 
-"     If current line and next one can't join or if next one is blank or begins
+"     If current line and next one can't join, or if next one is blank or begins
 "     a preserved environment, format from mark and move mark to next line.
       if  getline( line('.') + 1 ) =~# '\m'.s:pre || getline('.') =~# '\m'.s:nex
    \  || (getline( line('.') + 1 ) =~# '\m'.s:env && g:latexfmt_preserve_envs)
-         exe 'normal! $gw' . l:mark . 'G'
+         exe 'normal! $gw'.l:mark.'G'
          let l:mark = line('.') + 1
       endif
 
@@ -78,9 +78,9 @@ function latexfmt#FormatLines(key) abort
    call winrestview(l:win)
    call cursor(l:start, 1)
    if l:up_amt > 0        | exe 'norm! '.l:up_amt.'k' | return | endif
-   for i in l:chars[1:-2] | call search('\S')         | endfor
-   if len(l:chars) > 1    | call search(l:chars[-1])  | endif "Last character
-   if l:exbl > 0          | exe 'norm! '. l:exbl. 'l' | endif "Extra blanks
+   for i in l:chars[1:]   | call search('\S')         | endfor
+   if l:chars[-1] is ' '  | call search('\S ','be')   | endif  "For blank at end
+   if l:extbl > 0         | exe 'norm! '.l:extbl.'l'  | endif  "For extra blanks
 endfunction
 
 let &cpoptions = s:save_cpo
