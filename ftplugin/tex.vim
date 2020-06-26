@@ -16,9 +16,9 @@ let g:latexfmt_verbatim_envs = get( g:,'latexfmt_verbatim_envs', ['equation',
 let g:latexfmt_preserve_envs = get( g:,'latexfmt_preserve_envs', 1 )
 let g:latexfmt_merge_blanks  = get( g:,'latexfmt_merge_blanks', 1 )
 
-" Mapppings
-noremap <expr><silent><buffer> <Plug>latexfmt_format mode() =~? 'v' 
-         \                   ? ':<C-U>call latexfmt#FormatLines("v")<CR>' 
+" Mappings
+noremap <expr><silent><buffer> <Plug>latexfmt_format 
+         \   mode() =~? 'v'  ? ':<C-U>call latexfmt#FormatLines("v")<CR>' 
          \                   : ':<C-U>call latexfmt#FormatLines("n")<CR>' 
 nnoremap <silent><buffer> <Plug>latexfmt_toggle_envs 
          \   :let g:latexfmt_preserve_envs =  1 - g:latexfmt_preserve_envs<CR>
