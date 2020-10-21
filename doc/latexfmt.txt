@@ -55,7 +55,7 @@ on your run-time path.
 
 g:latexfmt_no_join_any,
         Type: List
-        Default List: [ '\(\\)\@1<!%','begin', 'end', '\section', '\subsection', 
+        Default List: [ '\(\\)\@1<!%','\begin', '\end', '\section', '\subsection', 
                         '\subsubsection', '\document', '\(\\)\@1<!\[', '\]' ] 
         
 This list specifies strings that prevent the line they're in from merging with
