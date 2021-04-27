@@ -26,11 +26,12 @@ function! latexfmt#FormatLines(key) abort
    if foldclosed('.') == -1 | exe "normal! ix\<esc>x"     | else 
                               exe "normal! zoix\<esc>xzc" | endif
 
-"  Build list of non-blanks + end blanks (if needed) from first line to cursor.
+"  Get text from first line to cursor, extract nonblanks, count blanks at end.
    let up_amt = first - line('.')    
-   let txt = add( getline(first,line('.')-1), strpart(getline('.'),0,col('.')) )
-   let chars = split( substitute(join(txt,''),' \ze.','', 'g'),'\zs' )
-   let ext_bl = len( matchstr(txt[-1],'[\.\?:][)}]\=\zs\s\{2,}$') ) - 1
+   let txt = join( add( getline(first,line('.')-1),
+       \                strpart (getline('.'),0,col('.') ) ), '' )
+   let nonblank_txt = substitute(txt,' ','','g')
+   let end_blanks = strchars( matchstr(txt,'\s*$') )     
     
 "  Save window view, go to start of range, open folds, and mark line. 
    let win = winsaveview()
@@ -40,10 +41,10 @@ function! latexfmt#FormatLines(key) abort
 
    while v:true 
 "     Skip over any preserved environments, moving line mark after each.
-      while  getline('.') =~# '\m'.s:env && g:latexfmt_preserve_envs
-         call search(substitute(substitute(substitute(expand('<cWORD>'),'\[',
-       \               '\\]','g'), 'begin','\\end',''), '*','\\*',''), 'W')
-         normal! j
+      while  search(s:env,'c',line('.')) && g:latexfmt_preserve_envs
+         call search(substitute(substitute(substitute(matchstr(expand('<cWORD>')
+       \     ,s:env),'\[','\\]','g'), 'begin','\\end',''), '*','\\*',''), 'W')
+         normal! j0
          let mark = line('.')
       endwhile
       if line('.') > last | break | endif
@@ -53,7 +54,7 @@ function! latexfmt#FormatLines(key) abort
          s/\S\zs\([\.\?:][)}]\=\)\@2<!\s\{2,}\ze/ /ge
       endif
 
-"     If at end of range or file, format from marked line and leave loop. 
+"     If at end of range or file, format from marked line and exit loop. 
       if line('.') is last || line('.') is line('$') 
          exe 'normal! $gw'.mark.'G'
          break 
@@ -68,17 +69,17 @@ function! latexfmt#FormatLines(key) abort
       endif
 
 "     Proceed to next line.
-      normal! j
+      normal! j0
  	endwhile
     
 "  Restore folds, window view, and cursor position.
    normal! zN
    call winrestview(win)
    exe 'normal! '.first.'G^'
-   if up_amt > 0       | exe 'norm! '.up_amt.'k' | return  | endif
-   for i in chars[1:]  | call search('\S')                 | endfor
-   if chars[-1] is ' ' | call search('\S ','be',line('.')) | endif    "End blank
-   if ext_bl > 0       | exe 'norm! '.ext_bl.'l'           | endif "Extra blanks
+   if up_amt > 0             | exe 'norm! '.up_amt.'k'     | return | endif
+   if !up_amt && txt !~ '\S' | call cursor('.',end_blanks) | return | endif
+   for i in nonblank_txt[1:] | call search('\S')                    | endfor
+   if end_blanks | call search('\( \|\n \)\{1,'.end_blanks.'}','e') | endif 
 endfunction
 
 let &cpoptions = s:save_cpo
