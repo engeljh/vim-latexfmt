@@ -1,9 +1,11 @@
 
-## LaTeXFmt is a LaTeX-aware formatter.   
+## LaTeXFmt is a LaTeX-aware Vim formatter.   
  
 ------------------------- 
 
- Here's an example of what LaTeXFmt does:
+LaTeXFmt is a vim package for formatting paragraphs and other text selections in
+LaTeX files.  It allows fine-grained control over lines containing keywords,
+commands, and environments. Here's an example:
   
 <img src="https://github.com/engeljh/assets/blob/master/LaTeXFmt.gif" width = "550"> 
  
