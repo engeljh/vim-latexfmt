@@ -3,7 +3,7 @@
  
 ------------------------- 
 
-LaTeXFmt is a vim package for formatting paragraphs and other text selections in
+LaTeXFmt is a vim plugin for formatting paragraphs and other text selections in
 LaTeX files.  It allows fine-grained control over lines containing keywords,
 commands, and environments. Here's an example:
   
